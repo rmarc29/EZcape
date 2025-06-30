@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:EZcape"
         mc:Ignorable="d"
         Title="EZcape - Tarkov Task Tracker" Height="750" Width="950"
+        MinWidth="600" MinHeight="500"
         Loaded="MainWindow_Loaded">
     <Window.Resources>
         <local:BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -63,293 +64,293 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
 
-    <Grid Margin="15" Background="{DynamicResource PrimaryBackgroundBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Viewbox>
+        <Grid Width="920" Height="700" Margin="15" Background="{DynamicResource PrimaryBackgroundBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="EZcape Task Tracker" Foreground="{DynamicResource PrimaryForegroundBrush}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"  FontFamily="/Fonts/#Russo One"/>
-            <TextBlock Grid.Column="1" Text="Dark Mode" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-            <ToggleButton Grid.Column="2" x:Name="ThemeToggleButton" VerticalAlignment="Center" Click="ThemeToggleButton_Click" Style="{StaticResource SlidingToggleStyle}"/>
-        </Grid>
-
-        <TextBlock x:Name="StatusTextBlock" Grid.Row="1" Text="Initializing..." VerticalAlignment="Center" Margin="0,0,0,10" FontSize="14" FontStyle="Italic" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-
-        <GroupBox Grid.Row="2" Header="Filters" Margin="0,0,0,10" FontWeight="SemiBold" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource PrimaryForegroundBrush}" BorderBrush="{DynamicResource BorderBrush}">
-            <WrapPanel>
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <Label Content="Task Name" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                    <TextBox x:Name="TaskNameFilterTextBox" Width="150" TextChanged="TaskNameFilter_TextChanged"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <Label Content="Trader" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                    <ComboBox x:Name="TraderFilterComboBox" Width="150" SelectionChanged="Filter_Changed"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <Label Content="Map" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                    <ComboBox x:Name="MapFilterComboBox" Width="150" SelectionChanged="Filter_Changed"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5,12,5,5">
-                    <CheckBox x:Name="KappaFilterCheckBox" Content="Kappa Required" Margin="5" Click="Filter_Changed" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                    <CheckBox x:Name="LightkeeperFilterCheckBox" Content="Lightkeeper Required" Margin="5" Click="Filter_Changed" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="5,12,5,5">
-                    <CheckBox x:Name="ShowCompletedCheckBox" Content="Show Completed" Margin="5" Click="Filter_Changed" Foreground="{DynamicResource PrimaryForegroundBrush}" IsChecked="False"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="15,5,5,5" VerticalAlignment="Center">
-                    <TextBlock x:Name="ProgressTextBlock" Text="0 / 0 Completed" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                    <Grid Margin="0,5,0,0">
-                        <ProgressBar x:Name="CompletionProgressBar" Height="20" Minimum="0" Maximum="100" Value="0"/>
-                        <TextBlock x:Name="ProgressPercentageTextBlock" Text="0%" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White">
-                            <TextBlock.Effect>
-                                <DropShadowEffect ShadowDepth="1" Direction="270" Color="Black" Opacity="0.9" BlurRadius="2"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
-                    </Grid>
-                    <Button x:Name="ResetProgressButton" 
-        Content="Reset Progress" 
-        Margin="0,8,0,0" 
-        Padding="8,3"
-        Background="IndianRed"
-        Foreground="White"
-        FontWeight="SemiBold"
-        Click="ResetProgressButton_Click"/>
-                </StackPanel>
-
-            </WrapPanel>
-        </GroupBox>
-
-        <Border Grid.Row="3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1.5" Padding="0,5">
-            <Grid>
+            <Grid Grid.Row="0" Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="1"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Rectangle Grid.Column="2" Fill="{DynamicResource BorderBrush}"/>
-                <Rectangle Grid.Column="4" Fill="{DynamicResource BorderBrush}"/>
-                <Rectangle Grid.Column="6" Fill="{DynamicResource BorderBrush}"/>
-                <Rectangle Grid.Column="8" Fill="{DynamicResource BorderBrush}"/>
-                <TextBlock Grid.Column="3" Text="Image" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                <TextBlock Grid.Column="5" Text="Task Name" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                <TextBlock Grid.Column="7" Text="Trader" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                <TextBlock Grid.Column="9" Text="Map" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                <TextBlock Grid.Column="0" Text="EZcape Task Tracker" Foreground="{DynamicResource PrimaryForegroundBrush}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" FontFamily="/Fonts/#Russo One"/>
+                <TextBlock Grid.Column="1" Text="Dark Mode" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                <ToggleButton Grid.Column="2" x:Name="ThemeToggleButton" VerticalAlignment="Center" Click="ThemeToggleButton_Click" Style="{StaticResource SlidingToggleStyle}"/>
             </Grid>
-        </Border>
 
-        <ListView x:Name="TasksListView" Grid.Row="4" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent" BorderThickness="0">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
-                                <ContentPresenter/>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0" Height="60">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="1"/>
-                                <ColumnDefinition Width="90"/>
-                                <ColumnDefinition Width="1"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="1"/>
-                                <ColumnDefinition Width="150"/>
-                                <ColumnDefinition Width="1"/>
-                                <ColumnDefinition Width="150"/>
-                            </Grid.ColumnDefinitions>
-                            <Rectangle Grid.Column="2" Fill="{DynamicResource BorderBrush}"/>
-                            <Rectangle Grid.Column="4" Fill="{DynamicResource BorderBrush}"/>
-                            <Rectangle Grid.Column="6" Fill="{DynamicResource BorderBrush}"/>
-                            <Rectangle Grid.Column="8" Fill="{DynamicResource BorderBrush}"/>
-                            <ToggleButton x:Name="ExpanderToggle" Grid.Column="0" Style="{StaticResource ExpandCollapseToggleStyle}" VerticalAlignment="Center"/>
-                            <CheckBox Grid.Column="1" IsChecked="{Binding IsCompleted, Mode=TwoWay}" Click="TaskCheckBox_Click" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <Image Grid.Column="3" Source="{Binding TaskImageLink, TargetNullValue={x:Null}}" Margin="5" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="5" Text="{Binding Name}" VerticalAlignment="Center" Margin="10,0,10,0" Foreground="{DynamicResource PrimaryForegroundBrush}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
-                                                <Setter Property="Opacity" Value="0.6"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
+            <TextBlock x:Name="StatusTextBlock" Grid.Row="1" Text="Initializing..." VerticalAlignment="Center" Margin="0,0,0,10" FontSize="14" FontStyle="Italic" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+
+            <GroupBox Grid.Row="2" Header="Filters" Margin="0,0,0,10" FontWeight="SemiBold" Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource PrimaryForegroundBrush}" BorderBrush="{DynamicResource BorderBrush}">
+                <WrapPanel>
+                    <StackPanel Orientation="Vertical" Margin="5">
+                        <Label Content="Task Name" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                        <TextBox x:Name="TaskNameFilterTextBox" Width="150" TextChanged="TaskNameFilter_TextChanged"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5">
+                        <Label Content="Trader" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                        <ComboBox x:Name="TraderFilterComboBox" Width="150" SelectionChanged="Filter_Changed"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5">
+                        <Label Content="Map" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                        <ComboBox x:Name="MapFilterComboBox" Width="150" SelectionChanged="Filter_Changed"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5,12,5,5">
+                        <CheckBox x:Name="KappaFilterCheckBox" Content="Kappa Required" Margin="5" Click="Filter_Changed" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                        <CheckBox x:Name="LightkeeperFilterCheckBox" Content="Lightkeeper Required" Margin="5" Click="Filter_Changed" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="5,12,5,5">
+                        <CheckBox x:Name="ShowCompletedCheckBox" Content="Show Completed" Margin="5" Click="Filter_Changed" Foreground="{DynamicResource PrimaryForegroundBrush}" IsChecked="False"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="15,5,5,5" VerticalAlignment="Center">
+                        <TextBlock x:Name="ProgressTextBlock" Text="0 / 0 Completed" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                        <Grid Margin="0,5,0,0">
+                            <ProgressBar x:Name="CompletionProgressBar" Height="20" Minimum="0" Maximum="100" Value="0"/>
+                            <TextBlock x:Name="ProgressPercentageTextBlock" Text="0%" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect ShadowDepth="1" Direction="270" Color="Black" Opacity="0.9" BlurRadius="2"/>
+                                </TextBlock.Effect>
                             </TextBlock>
-                            <TextBlock Grid.Column="7" Text="{Binding Trader.Name}" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                            <TextBlock Grid.Column="9" Text="{Binding Map.Name}" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
                         </Grid>
-                        <Border Grid.Row="1" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="15,10,15,15" Margin="20,0,0,5" Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BoolToVis}}">
-                            <StackPanel>
-                                <WrapPanel Margin="0,0,0,15">
-                                    <TextBlock FontWeight="Bold" Foreground="DarkRed" Text="Required for Kappa">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding KappaRequired}" Value="True">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBlock Text=" | " Margin="5,0" Foreground="{DynamicResource PrimaryForegroundBrush}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding KappaRequired}" Value="True"/>
-                                                            <Condition Binding="{Binding LightkeeperRequired}" Value="True"/>
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </MultiDataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBlock FontWeight="Bold" Foreground="DarkOrange" Text="Required for Lightkeeper">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding LightkeeperRequired}" Value="True">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBlock Text=" | " Margin="5,0" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryForegroundBrush}">
-                                        <TextBlock.Visibility>
-                                            <MultiBinding Converter="{StaticResource OrVisibilityConverter}">
-                                                <Binding Path="KappaRequired"/>
-                                                <Binding Path="LightkeeperRequired"/>
-                                            </MultiBinding>
-                                        </TextBlock.Visibility>
-                                    </TextBlock>
-                                    <TextBlock VerticalAlignment="Center">
-                                        <Hyperlink NavigateUri="{Binding WikiLink, TargetNullValue={x:Null}}" RequestNavigate="Hyperlink_RequestNavigate">
-                                            <TextBlock Text="View on Wiki" Foreground="{DynamicResource AccentBrush}"/>
-                                        </Hyperlink>
-                                    </TextBlock>
-                                </WrapPanel>
-                                <TextBlock Text="Objectives" Style="{StaticResource SectionHeader}"/>
-                                <ItemsControl ItemsSource="{Binding Objectives}" Margin="10,0,0,0">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="0,2">
-                                                <TextBlock Text="•" Margin="0,0,5,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <TextBlock Text="Start Rewards" Style="{StaticResource SectionHeader}"/>
-                                <ItemsControl ItemsSource="{Binding StartRewards.Items}" Margin="10,0,0,0">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="0,2">
-                                                <TextBlock Text="•" Margin="0,0,5,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                                                <TextBlock Text="{Binding Item.Name}" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <TextBlock Text="Finish Rewards" Style="{StaticResource SectionHeader}"/>
-                                <ItemsControl ItemsSource="{Binding FinishRewards.Items}" Margin="10,0,0,0">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="0,2">
-                                                <TextBlock Text="•" Margin="0,0,5,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                                                <TextBlock Text="{Binding Item.Name}" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                        <Button x:Name="ResetProgressButton" 
+                            Content="Reset Progress" 
+                            Margin="0,8,0,0" 
+                            Padding="8,3"
+                            Background="IndianRed"
+                            Foreground="White"
+                            FontWeight="SemiBold"
+                            Click="ResetProgressButton_Click"/>
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
 
-        <Grid x:Name="LoadingOverlay" Grid.Row="2" Grid.RowSpan="3" Background="#DDFFFFFF" Visibility="Collapsed">
-            <Grid.Resources>
-                <Storyboard x:Key="SpinAnimation" RepeatBehavior="Forever">
-                    <DoubleAnimation Storyboard.TargetName="SpinnerRotate" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:1"/>
-                </Storyboard>
-                <Storyboard x:Key="AnimateDots" RepeatBehavior="Forever">
-                    <StringAnimationUsingKeyFrames Storyboard.TargetName="LoadingText" Storyboard.TargetProperty="Text">
-                        <DiscreteStringKeyFrame KeyTime="0:0:0" Value="Loading"/>
-                        <DiscreteStringKeyFrame KeyTime="0:0:0.5" Value="Loading."/>
-                        <DiscreteStringKeyFrame KeyTime="0:0:1" Value="Loading.."/>
-                        <DiscreteStringKeyFrame KeyTime="0:0:1.5" Value="Loading..."/>
-                    </StringAnimationUsingKeyFrames>
-                </Storyboard>
-            </Grid.Resources>
-            <Grid.Triggers>
-                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                    <BeginStoryboard Storyboard="{StaticResource SpinAnimation}"/>
-                    <BeginStoryboard Storyboard="{StaticResource AnimateDots}"/>
-                </EventTrigger>
-            </Grid.Triggers>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock x:Name="LoadingText" FontSize="22" FontWeight="SemiBold" Text="Loading" Foreground="Black"/>
-                <Path Stroke="DodgerBlue" StrokeThickness="4" Width="50" Height="50" Margin="0,20,0,0">
-                    <Path.Data>
-                        <PathGeometry>
-                            <PathGeometry.Figures>
-                                <PathFigure StartPoint="45,25">
-                                    <ArcSegment Size="20,20" Point="5,25" SweepDirection="Clockwise"/>
-                                </PathFigure>
-                            </PathGeometry.Figures>
-                        </PathGeometry>
-                    </Path.Data>
-                    <Path.RenderTransform>
-                        <RotateTransform x:Name="SpinnerRotate" CenterX="25" CenterY="25"/>
-                    </Path.RenderTransform>
-                </Path>
-            </StackPanel>
+            <Border Grid.Row="3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1.5" Padding="0,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="150"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Grid.Column="2" Fill="{DynamicResource BorderBrush}"/>
+                    <Rectangle Grid.Column="4" Fill="{DynamicResource BorderBrush}"/>
+                    <Rectangle Grid.Column="6" Fill="{DynamicResource BorderBrush}"/>
+                    <Rectangle Grid.Column="8" Fill="{DynamicResource BorderBrush}"/>
+                    <TextBlock Grid.Column="3" Text="Image" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                    <TextBlock Grid.Column="5" Text="Task Name" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                    <TextBlock Grid.Column="7" Text="Trader" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                    <TextBlock Grid.Column="9" Text="Map" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                </Grid>
+            </Border>
+
+            <ListView x:Name="TasksListView" Grid.Row="4" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent" BorderThickness="0">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ContentPresenter/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Height="60">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="1"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Grid.Column="2" Fill="{DynamicResource BorderBrush}"/>
+                                <Rectangle Grid.Column="4" Fill="{DynamicResource BorderBrush}"/>
+                                <Rectangle Grid.Column="6" Fill="{DynamicResource BorderBrush}"/>
+                                <Rectangle Grid.Column="8" Fill="{DynamicResource BorderBrush}"/>
+                                <ToggleButton x:Name="ExpanderToggle" Grid.Column="0" Style="{StaticResource ExpandCollapseToggleStyle}" VerticalAlignment="Center"/>
+                                <CheckBox Grid.Column="1" IsChecked="{Binding IsCompleted, Mode=TwoWay}" Click="TaskCheckBox_Click" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Image Grid.Column="3" Source="{Binding TaskImageLink, TargetNullValue={x:Null}}" Margin="5" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="5" Text="{Binding Name}" VerticalAlignment="Center" Margin="10,0,10,0" Foreground="{DynamicResource PrimaryForegroundBrush}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                    <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                    <Setter Property="Opacity" Value="0.6"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Grid.Column="7" Text="{Binding Trader.Name}" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                <TextBlock Grid.Column="9" Text="{Binding Map.Name}" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                            </Grid>
+                            <Border Grid.Row="1" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="15,10,15,15" Margin="20,0,0,5" Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BoolToVis}}">
+                                <StackPanel>
+                                    <WrapPanel Margin="0,0,0,15">
+                                        <TextBlock FontWeight="Bold" Foreground="Goldenrod" Text="Required for Kappa">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding KappaRequired}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Text=" | " Margin="5,0" Foreground="{DynamicResource PrimaryForegroundBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding KappaRequired}" Value="True"/>
+                                                                <Condition Binding="{Binding LightkeeperRequired}" Value="True"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock FontWeight="Bold" Foreground="Cyan" Text="Required for Lightkeeper">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding LightkeeperRequired}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Text=" | " Margin="5,0" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryForegroundBrush}">
+                                            <TextBlock.Visibility>
+                                                <MultiBinding Converter="{StaticResource OrVisibilityConverter}">
+                                                    <Binding Path="KappaRequired"/>
+                                                    <Binding Path="LightkeeperRequired"/>
+                                                </MultiBinding>
+                                            </TextBlock.Visibility>
+                                        </TextBlock>
+                                        <TextBlock VerticalAlignment="Center">
+                                            <Hyperlink NavigateUri="{Binding WikiLink, TargetNullValue={x:Null}}" RequestNavigate="Hyperlink_RequestNavigate">
+                                                <TextBlock Text="View on Wiki" Foreground="{DynamicResource AccentBrush}"/>
+                                            </Hyperlink>
+                                        </TextBlock>
+                                    </WrapPanel>
+                                    <TextBlock Text="Objectives" Style="{StaticResource SectionHeader}"/>
+                                    <ItemsControl ItemsSource="{Binding Objectives}" Margin="10,0,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2">
+                                                    <TextBlock Text="•" Margin="0,0,5,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock Text="Start Rewards" Style="{StaticResource SectionHeader}"/>
+                                    <ItemsControl ItemsSource="{Binding StartRewards.Items}" Margin="10,0,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2">
+                                                    <TextBlock Text="•" Margin="0,0,5,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                                    <TextBlock Text="{Binding Item.Name}" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock Text="Finish Rewards" Style="{StaticResource SectionHeader}"/>
+                                    <ItemsControl ItemsSource="{Binding FinishRewards.Items}" Margin="10,0,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2">
+                                                    <TextBlock Text="•" Margin="0,0,5,0" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                                    <TextBlock Text="{Binding Item.Name}" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid x:Name="LoadingOverlay" Grid.Row="2" Grid.RowSpan="3" Background="#DDFFFFFF" Visibility="Collapsed">
+                <Grid.Resources>
+                    <Storyboard x:Key="SpinAnimation" RepeatBehavior="Forever">
+                        <DoubleAnimation Storyboard.TargetName="SpinnerRotate" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:1"/>
+                    </Storyboard>
+                    <Storyboard x:Key="AnimateDots" RepeatBehavior="Forever">
+                        <StringAnimationUsingKeyFrames Storyboard.TargetName="LoadingText" Storyboard.TargetProperty="Text">
+                            <DiscreteStringKeyFrame KeyTime="0:0:0" Value="Loading"/>
+                            <DiscreteStringKeyFrame KeyTime="0:0:0.5" Value="Loading."/>
+                            <DiscreteStringKeyFrame KeyTime="0:0:1" Value="Loading.."/>
+                            <DiscreteStringKeyFrame KeyTime="0:0:1.5" Value="Loading..."/>
+                        </StringAnimationUsingKeyFrames>
+                    </Storyboard>
+                </Grid.Resources>
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource SpinAnimation}"/>
+                        <BeginStoryboard Storyboard="{StaticResource AnimateDots}"/>
+                    </EventTrigger>
+                </Grid.Triggers>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock x:Name="LoadingText" FontSize="22" FontWeight="SemiBold" Text="Loading" Foreground="Black"/>
+                    <Path Stroke="DodgerBlue" StrokeThickness="4" Width="50" Height="50" Margin="0,20,0,0">
+                        <Path.Data>
+                            <PathGeometry>
+                                <PathGeometry.Figures>
+                                    <PathFigure StartPoint="45,25">
+                                        <ArcSegment Size="20,20" Point="5,25" SweepDirection="Clockwise"/>
+                                    </PathFigure>
+                                </PathGeometry.Figures>
+                            </PathGeometry>
+                        </Path.Data>
+                        <Path.RenderTransform>
+                            <RotateTransform x:Name="SpinnerRotate" CenterX="25" CenterY="25"/>
+                        </Path.RenderTransform>
+                    </Path>
+                </StackPanel>
+            </Grid>
         </Grid>
-    </Grid>
+    </Viewbox>
 </Window>

@@ -26,35 +26,6 @@ namespace EZcape
         private readonly string _themeFilePath;
         private List<TaskItem>? _allTasks;
 
-        private void ResetProgressButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Ask the user for confirmation because this is a destructive action.
-            MessageBoxResult result = MessageBox.Show(
-                "Are you sure you want to reset all task progress? This action cannot be undone.",
-                "Confirm Reset",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            // Only proceed if the user clicks "Yes".
-            if (result == MessageBoxResult.Yes)
-            {
-                if (_allTasks == null || !_allTasks.Any()) return;
-
-                // Loop through every task and set its IsCompleted status to false.
-                foreach (var task in _allTasks)
-                {
-                    task.IsCompleted = false;
-                }
-
-                // After resetting, update everything.
-                SaveTasksToFile();   // Save the changes to the file.
-                UpdateProgress();    // Update the progress bar to show 0.
-                ApplyFilters();      // Refresh the ListView to show all the now-incomplete tasks.
-
-                StatusTextBlock.Text = "All task progress has been reset.";
-            }
-        }
-
         public MainWindow()
         {
             InitializeComponent();
@@ -315,6 +286,31 @@ namespace EZcape
             SaveTasksToFile();
             UpdateProgress();
             ApplyFilters();
+        }
+
+        private void ResetProgressButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to reset all task progress? This action cannot be undone.",
+                "Confirm Reset",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                if (_allTasks == null || !_allTasks.Any()) return;
+
+                foreach (var task in _allTasks)
+                {
+                    task.IsCompleted = false;
+                }
+
+                SaveTasksToFile();
+                UpdateProgress();
+                ApplyFilters();
+
+                StatusTextBlock.Text = "All task progress has been reset.";
+            }
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
