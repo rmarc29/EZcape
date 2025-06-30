@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<!-- This is the only section you need. -->
+	<!-- It FINDS the C# file the SDK already included, and just UPDATES it -->
+	<!-- to tell it that it "Depends On" the XAML file. This creates the nesting. -->
+	<ItemGroup>
+		<Compile Update="MainWindow.xaml.cs">
+			<DependentUpon>MainWindow.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+</Project>
