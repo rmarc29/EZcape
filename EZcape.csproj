@@ -7,6 +7,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Assets\favicon.ico</ApplicationIcon>
+		<UserSecretsId>7dd30dd2-94ba-4adc-8908-31354ff57abb</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -14,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
@@ -42,5 +44,33 @@
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
+
+	<!-- ==================================================================== -->
+	<!-- ======================= AUTO-SIGNING LOGIC ======================= -->
+	<!-- ==================================================================== -->
+
+	<!-- This section defines the properties for our signing process. -->
+	<PropertyGroup>
+		<SignOnPublish>true</SignOnPublish>
+		<PfxFile>$(MSBuildProjectDirectory)\EZcapeCert.pfx</PfxFile>
+		<!-- The PfxPassword is read from User Secrets. -->
+		<TimestampServerUrl>http://timestamp.comodoca.com</TimestampServerUrl>
+	</PropertyGroup>
+
+	<!-- This is the MSBuild Target that will run the signing command. -->
+	<Target Name="SignPackage" AfterTargets="Publish" Condition=" '$(SignOnPublish)' == 'true' ">
+
+		<!-- Define properties for the command -->
+		<PropertyGroup>
+			<ApplicationPath>$(PublishDir)$(AssemblyName).exe</ApplicationPath>
+			<SignCommand>"$(WindowsSdkDir)bin\$(WindowsSdkVersion)x64\signtool.exe" sign /f "$(PfxFile)" /p "$(PfxPassword)" /fd SHA256 /t "$(TimestampServerUrl)" "$(ApplicationPath)"</SignCommand>
+		</PropertyGroup>
+
+		<!-- Execute the command using the assembled property -->
+		<Exec Command="$(SignCommand)" />
+
+		<Message Text="Successfully signed $(ApplicationPath)" Importance="high" />
+
+	</Target>
 
 </Project>
