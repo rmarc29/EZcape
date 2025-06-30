@@ -23,7 +23,37 @@ namespace EZcape
         private const string ApiUrl = "https://api.tarkov.dev/graphql";
         private static readonly HttpClient client = new HttpClient();
         private readonly string _saveFilePath;
-        private List<TaskItem>? _allTasks; // Added '?' to handle nullability warning
+        private readonly string _themeFilePath;
+        private List<TaskItem>? _allTasks;
+
+        private void ResetProgressButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Ask the user for confirmation because this is a destructive action.
+            MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to reset all task progress? This action cannot be undone.",
+                "Confirm Reset",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            // Only proceed if the user clicks "Yes".
+            if (result == MessageBoxResult.Yes)
+            {
+                if (_allTasks == null || !_allTasks.Any()) return;
+
+                // Loop through every task and set its IsCompleted status to false.
+                foreach (var task in _allTasks)
+                {
+                    task.IsCompleted = false;
+                }
+
+                // After resetting, update everything.
+                SaveTasksToFile();   // Save the changes to the file.
+                UpdateProgress();    // Update the progress bar to show 0.
+                ApplyFilters();      // Refresh the ListView to show all the now-incomplete tasks.
+
+                StatusTextBlock.Text = "All task progress has been reset.";
+            }
+        }
 
         public MainWindow()
         {
@@ -32,13 +62,18 @@ namespace EZcape
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", "EZcape TarkovApp/1.0");
+
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string ezcapeFolder = Path.Combine(appDataFolder, "EZcape");
+            Directory.CreateDirectory(ezcapeFolder);
             _saveFilePath = Path.Combine(ezcapeFolder, "tasks.json");
+            _themeFilePath = Path.Combine(ezcapeFolder, "theme.txt");
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            LoadTheme();
+
             if (File.Exists(_saveFilePath))
             {
                 LoadTasksFromDisk();
@@ -47,6 +82,74 @@ namespace EZcape
             {
                 await FetchTasksFromServerAsync();
             }
+            ApplyFilters();
+        }
+
+        private void LoadTheme()
+        {
+            if (File.Exists(_themeFilePath))
+            {
+                string themeName = File.ReadAllText(_themeFilePath);
+                if (themeName == "Dark")
+                {
+                    ThemeManager.SetTheme("Dark");
+                    ThemeToggleButton.IsChecked = true;
+                }
+                else
+                {
+                    ThemeManager.SetTheme("Light");
+                    ThemeToggleButton.IsChecked = false;
+                }
+            }
+            else
+            {
+                ThemeManager.SetTheme("Light");
+                ThemeToggleButton.IsChecked = false;
+            }
+        }
+
+        private void ThemeToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            string themeName;
+            if (ThemeToggleButton.IsChecked == true)
+            {
+                themeName = "Dark";
+                ThemeManager.SetTheme(themeName);
+            }
+            else
+            {
+                themeName = "Light";
+                ThemeManager.SetTheme(themeName);
+            }
+
+            try
+            {
+                File.WriteAllText(_themeFilePath, themeName);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to save theme: {ex.Message}");
+            }
+        }
+
+        private void UpdateProgress()
+        {
+            if (_allTasks == null || !_allTasks.Any())
+            {
+                ProgressTextBlock.Text = "0 / 0 Completed";
+                CompletionProgressBar.Value = 0;
+                ProgressPercentageTextBlock.Text = "0%";
+                return;
+            }
+
+            int totalCount = _allTasks.Count;
+            int completedCount = _allTasks.Count(t => t.IsCompleted);
+
+            double percentage = (totalCount > 0) ? ((double)completedCount / totalCount) * 100 : 0;
+
+            ProgressTextBlock.Text = $"{completedCount} / {totalCount} Completed";
+            CompletionProgressBar.Value = percentage;
+            ProgressPercentageTextBlock.Text = $"{percentage:F0}%";
         }
 
         private void LoadTasksFromDisk()
@@ -57,8 +160,9 @@ namespace EZcape
                 string json = File.ReadAllText(_saveFilePath);
                 _allTasks = JsonConvert.DeserializeObject<List<TaskItem>>(json);
                 TasksListView.ItemsSource = _allTasks;
-                StatusTextBlock.Text = $"Loaded {_allTasks?.Count ?? 0} tasks from local save file."; // Added null check
+                StatusTextBlock.Text = $"Loaded {_allTasks?.Count ?? 0} tasks from local save file.";
                 PopulateFilterComboBoxes();
+                UpdateProgress();
             }
             catch (Exception ex)
             {
@@ -106,6 +210,7 @@ namespace EZcape
                         StatusTextBlock.Text = $"Success! Found and saved {_allTasks.Count} tasks.";
                         SaveTasksToFile();
                         PopulateFilterComboBoxes();
+                        UpdateProgress();
                     }
                     else if (apiResponse?.Errors != null && apiResponse.Errors.Any())
                     {
@@ -134,13 +239,11 @@ namespace EZcape
         {
             if (_allTasks == null) return;
 
-            // Populate Trader Filter
             var traders = _allTasks.Select(t => t.Trader.Name).Distinct().OrderBy(name => name).ToList();
             traders.Insert(0, "All Traders");
             TraderFilterComboBox.ItemsSource = traders;
             TraderFilterComboBox.SelectedIndex = 0;
 
-            // Populate Map Filter
             var maps = _allTasks.Where(t => t.Map != null).Select(t => t.Map.Name).Distinct().OrderBy(name => name).ToList();
             maps.Insert(0, "All Maps");
             MapFilterComboBox.ItemsSource = maps;
@@ -153,37 +256,37 @@ namespace EZcape
 
             IEnumerable<TaskItem> filteredTasks = _allTasks;
 
-            // Filter by Task Name
             string nameFilter = TaskNameFilterTextBox.Text;
             if (!string.IsNullOrWhiteSpace(nameFilter))
             {
                 filteredTasks = filteredTasks.Where(t => t.Name.IndexOf(nameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
-            // Filter by Trader
             if (TraderFilterComboBox.SelectedIndex > 0)
             {
                 string? traderFilter = TraderFilterComboBox.SelectedItem?.ToString();
                 filteredTasks = filteredTasks.Where(t => t.Trader.Name == traderFilter);
             }
 
-            // Filter by Map
             if (MapFilterComboBox.SelectedIndex > 0)
             {
                 string? mapFilter = MapFilterComboBox.SelectedItem?.ToString();
                 filteredTasks = filteredTasks.Where(t => t.Map != null && t.Map.Name == mapFilter);
             }
 
-            // Filter by Kappa Required
             if (KappaFilterCheckBox.IsChecked == true)
             {
                 filteredTasks = filteredTasks.Where(t => t.KappaRequired);
             }
 
-            // Filter by Lightkeeper Required
             if (LightkeeperFilterCheckBox.IsChecked == true)
             {
                 filteredTasks = filteredTasks.Where(t => t.LightkeeperRequired);
+            }
+
+            if (ShowCompletedCheckBox.IsChecked == false)
+            {
+                filteredTasks = filteredTasks.Where(t => !t.IsCompleted);
             }
 
             TasksListView.ItemsSource = filteredTasks.ToList();
@@ -198,13 +301,7 @@ namespace EZcape
             if (_allTasks == null || !_allTasks.Any()) return;
             try
             {
-                // Note: The '?' tells the compiler that we know the GetDirectoryName result can be null
-                string? directory = Path.GetDirectoryName(_saveFilePath);
-                if (directory != null)
-                {
-                    Directory.CreateDirectory(directory);
-                }
-                string json = JsonConvert.SerializeObject(_allTasks, Newtonsoft.Json.Formatting.Indented); // Specified full namespace
+                string json = JsonConvert.SerializeObject(_allTasks, Newtonsoft.Json.Formatting.Indented);
                 File.WriteAllText(_saveFilePath, json);
             }
             catch (Exception ex)
@@ -216,21 +313,17 @@ namespace EZcape
         private void TaskCheckBox_Click(object sender, RoutedEventArgs e)
         {
             SaveTasksToFile();
-            if (TasksListView.ItemsSource != null)
-            {
-                TasksListView.Items.Refresh();
-            }
+            UpdateProgress();
+            ApplyFilters();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            // Use ProcessStartInfo for modern .NET Core compatibility
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
     }
 
-    // These classes are fine, but adding '?' makes them compliant with modern C# nullability rules
     public class BooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
