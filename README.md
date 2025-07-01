@@ -41,7 +41,7 @@ Download the `EZcape.zip` file from the "Assets" section.
 Open the newly extracted folder and double-click `EZcape.exe`.
 
 > [!NOTE]
-> **Windows SmartScreen:** The first time you run the app, Windows might show a *blue* or *red* "Windows protected your PC" screen. This is because the application is not yet signed with an expensive code-signing certificate.
+> **Windows SmartScreen:** The first time you run the app, Windows might show a $\color{blue}{\textit{blue}}$ or $\color{red}{\textit{red}}$ "Windows protected your PC" screen. This is because the application is not yet signed with an expensive code-signing certificate.
 >
 > To run it, simply click **"More info"**, and then click the **"Run anyway"** button.
 
