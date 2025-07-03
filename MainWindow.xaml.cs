@@ -16,8 +16,7 @@ using System.Windows.Data; // For IValueConverter, IMultiValueConverter
 using System.Windows.Input; // For MouseButtonEventArgs, Cursors
 using System.Windows.Navigation; // For RequestNavigateEventArgs
 
-// IMPORTANT: Make sure your ThemeManager.cs file is in the EZcape namespace
-// and that it correctly manages the dynamic resources.
+
 
 namespace EZcape
 {
@@ -347,7 +346,7 @@ namespace EZcape
             e.Handled = true;
         }
 
-        // --- NEW: Custom Title Bar Event Handlers ---
+        
 
         // Event handler for dragging the window by clicking and holding the custom title bar
         private void CustomTitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
