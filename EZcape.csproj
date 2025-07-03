@@ -6,71 +6,55 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<ApplicationIcon>Assets\favicon.ico</ApplicationIcon>
+		<ApplicationIcon>Assets/icon.ico</ApplicationIcon>
+		<!-- This is the unique ID for your User Secrets file. Do not change it. -->
 		<UserSecretsId>7dd30dd2-94ba-4adc-8908-31354ff57abb</UserSecretsId>
+		<AssemblyVersion>1.0.1.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Fonts\RussoOne-Regular.ttf" />
+		<None Remove="Fonts\RussoOne-Regular.ttf" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.6" />
+		<PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="3.0.2" />
+		<PackageReference Include="NetSparkleUpdater.UI.WPF" Version="3.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Fonts\RussoOne-Regular.ttf">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Resource>
+		<Resource Include="Fonts\RussoOne-Regular.ttf" />
 	</ItemGroup>
 
-	<!-- This is the only section you need. -->
-	<!-- It FINDS the C# file the SDK already included, and just UPDATES it -->
-	<!-- to tell it that it "Depends On" the XAML file. This creates the nesting. -->
 	<ItemGroup>
 		<Compile Update="MainWindow.xaml.cs">
 			<DependentUpon>MainWindow.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Properties\Resources.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-	  <EmbeddedResource Update="Properties\Resources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
 	</ItemGroup>
 
 	<!-- ==================================================================== -->
 	<!-- ======================= AUTO-SIGNING LOGIC ======================= -->
 	<!-- ==================================================================== -->
 
-	<!-- This section defines the properties for our signing process. -->
-	<PropertyGroup>
-		<SignOnPublish>true</SignOnPublish>
-		<PfxFile>$(MSBuildProjectDirectory)\EZcapeCert.pfx</PfxFile>
-		<!-- The PfxPassword is read from User Secrets. -->
-		<TimestampServerUrl>http://timestamp.comodoca.com</TimestampServerUrl>
-	</PropertyGroup>
+	<Target Name="SignPackage" AfterTargets="Publish">
 
-	<!-- This is the MSBuild Target that will run the signing command. -->
-	<Target Name="SignPackage" AfterTargets="Publish" Condition=" '$(SignOnPublish)' == 'true' ">
+		
+		<Error Condition=" '$(EZCAPE_PFX_PASSWORD)' == '' " Text="The EZCAPE_PFX_PASSWORD environment variable is not set. Signing will be skipped." />
 
-		<!-- Define properties for the command -->
 		<PropertyGroup>
 			<ApplicationPath>$(PublishDir)$(AssemblyName).exe</ApplicationPath>
-			<SignCommand>"$(WindowsSdkDir)bin\$(WindowsSdkVersion)x64\signtool.exe" sign /f "$(PfxFile)" /p "$(PfxPassword)" /fd SHA256 /t "$(TimestampServerUrl)" "$(ApplicationPath)"</SignCommand>
+			<PfxFile>$(MSBuildProjectDirectory)\EZcapeCert.pfx</PfxFile>
+			<TimestampServerUrl>http://timestamp.comodoca.com</TimestampServerUrl>
+			
+			<SignCommand>"$(ArtifactsSigningToolsDir)signtool.exe" sign /f "$(PfxFile)" /p "$(EZCAPE_PFX_PASSWORD)" /fd SHA256 /t "$(TimestampServerUrl)" "$(ApplicationPath)"</SignCommand>
 		</PropertyGroup>
 
-		<!-- Execute the command using the assembled property -->
 		<Exec Command="$(SignCommand)" />
 
-		<Message Text="Successfully signed $(ApplicationPath)" Importance="high" />
-
+		<Message Text="Successfully signed $(ApplicationPath) using Environment Variable method." Importance="high" />
 	</Target>
 
 </Project>
+
