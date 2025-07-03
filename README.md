@@ -12,7 +12,7 @@ A modern, feature-rich, standalone desktop application for tracking your ***task
 EZcape isn't just a list. It's a full-featured tool designed to make your Tarkov wipes smoother and more organized.
 
 *  📔 **Complete Task Database:** All tasks fetched directly from the tarkov.dev API, ensuring data is always up-to-date.
-*  💾 **Persistent Progress:** Your completed tasks are saved locally, so your progress is always there when you reopen the app.
+*  💾 **Persistent Progress:** Your completed tasks are saved locally, so your progress is always there when you reopen or update the app.
 *  ♻️ **Powerful Filtering:** Quickly find what you need by filtering tasks by **name**, **trader**, or **map**.
 *  ❗ **Key Quest Indicators:** Instantly see which tasks are required for "The Collector" (**Kappa**) or for unlocking **the Lightkeeper**.
 *  ☀️/🌚 **Light & Dark Modes:** Choose a theme that fits your setup. Your preference is saved automatically.
