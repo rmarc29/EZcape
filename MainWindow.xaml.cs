@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -39,6 +40,8 @@ namespace EZcape
             Directory.CreateDirectory(ezcapeFolder);
             _saveFilePath = Path.Combine(ezcapeFolder, "tasks.json");
             _themeFilePath = Path.Combine(ezcapeFolder, "theme.txt");
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            VersionTextBlock.Text = $"Version: {version}";
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

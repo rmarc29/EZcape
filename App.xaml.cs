@@ -26,7 +26,7 @@ namespace EZcape
         private async System.Threading.Tasks.Task CheckForUpdatesAsync()
         {
             // IMPORTANT: Replace this with the actual raw URL to your latest_version.txt file
-            const string onlineVersionFileUrl = "https://gist.githubusercontent.com/rmarc29/0d0fb8662309e325f6aaffb94727f698/raw/1191fdc33cec378aae647c4c812c84355e9d2a24/ezcape_latest_version.txt";
+            const string onlineVersionFileUrl = "https://gist.githubusercontent.com/rmarc29/0d0fb8662309e325f6aaffb94727f698/raw/ezcape_latest_version.txt\r\n";
             // IMPORTANT: Replace this with the URL to your GitHub Releases page
             const string githubReleasesUrl = "https://github.com/rmarc29/EZcape/releases";
 
