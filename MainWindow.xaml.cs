@@ -110,18 +110,42 @@ namespace EZcape
                 ProgressTextBlock.Text = "0 / 0 Completed";
                 CompletionProgressBar.Value = 0;
                 ProgressPercentageTextBlock.Text = "0%";
+
+                KappaProgressTextBlock.Text = "Kappa: 0 / 0";
+                KappaProgressBar.Value = 0;
+                KappaPercentageTextBlock.Text = "0%";
+
+                LightkeeperProgressTextBlock.Text = "Lightkeeper: 0 / 0";
+                LightkeeperProgressBar.Value = 0;
+                LightkeeperPercentageTextBlock.Text = "0%";
                 return;
             }
 
             int totalCount = _allTasks.Count;
             int completedCount = _allTasks.Count(t => t.IsCompleted);
 
-            double percentage = (totalCount > 0) ? ((double)completedCount / totalCount) * 100 : 0;
-
+            double overallPercentage = (double)completedCount / totalCount * 100;
             ProgressTextBlock.Text = $"{completedCount} / {totalCount} Completed";
-            CompletionProgressBar.Value = percentage;
-            ProgressPercentageTextBlock.Text = $"{percentage:F0}%";
+            CompletionProgressBar.Value = overallPercentage;
+            ProgressPercentageTextBlock.Text = $"{overallPercentage:F0}%";
+
+            // Kappa progress
+            var kappaTasks = _allTasks.Where(t => t.KappaRequired).ToList();
+            int kappaCompleted = kappaTasks.Count(t => t.IsCompleted);
+            double kappaPercentage = kappaTasks.Any() ? (double)kappaCompleted / kappaTasks.Count * 100 : 0;
+            KappaProgressTextBlock.Text = $"Kappa: {kappaCompleted} / {kappaTasks.Count}";
+            KappaProgressBar.Value = kappaPercentage;
+            KappaPercentageTextBlock.Text = $"{kappaPercentage:F0}%";
+
+            // Lightkeeper progress
+            var lightkeeperTasks = _allTasks.Where(t => t.LightkeeperRequired).ToList();
+            int lightkeeperCompleted = lightkeeperTasks.Count(t => t.IsCompleted);
+            double lightkeeperPercentage = lightkeeperTasks.Any() ? (double)lightkeeperCompleted / lightkeeperTasks.Count * 100 : 0;
+            LightkeeperProgressTextBlock.Text = $"Lightkeeper: {lightkeeperCompleted} / {lightkeeperTasks.Count}";
+            LightkeeperProgressBar.Value = lightkeeperPercentage;
+            LightkeeperPercentageTextBlock.Text = $"{lightkeeperPercentage:F0}%";
         }
+
 
         private void LoadTasksFromDisk()
         {

@@ -115,13 +115,34 @@
                     <StackPanel Orientation="Vertical" Margin="15,5,5,5" VerticalAlignment="Center">
                         <TextBlock x:Name="ProgressTextBlock" Text="0 / 0 Completed" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryForegroundBrush}"/>
                         <Grid Margin="0,5,0,0">
-                            <ProgressBar x:Name="CompletionProgressBar" Height="20" Minimum="0" Maximum="100" Value="0"/>
+                            <ProgressBar x:Name="CompletionProgressBar" Height="20" Minimum="0" Maximum="100" Value="0" Background="#333"/>
                             <TextBlock x:Name="ProgressPercentageTextBlock" Text="0%" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White">
                                 <TextBlock.Effect>
                                     <DropShadowEffect ShadowDepth="1" Direction="270" Color="Black" Opacity="0.9" BlurRadius="2"/>
                                 </TextBlock.Effect>
                             </TextBlock>
                         </Grid>
+                        
+                        <TextBlock x:Name="KappaProgressTextBlock" Text="Kappa: 0 / 0" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryForegroundBrush}" Margin="0,8,0,0"/>
+                        <Grid Margin="0,5,0,0">
+                            <ProgressBar x:Name="KappaProgressBar" Height="16" Minimum="0" Maximum="100" Value="0" Background="#333"/>
+                            <TextBlock x:Name="KappaPercentageTextBlock" Text="0%" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect ShadowDepth="1" Direction="270" Color="Black" Opacity="0.9" BlurRadius="2"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Grid>
+
+                        <TextBlock x:Name="LightkeeperProgressTextBlock" Text="Lightkeeper: 0 / 0" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryForegroundBrush}" Margin="0,8,0,0"/>
+                        <Grid Margin="0,5,0,0">
+                            <ProgressBar x:Name="LightkeeperProgressBar" Height="16" Minimum="0" Maximum="100" Value="0" Background="#333"/>
+                            <TextBlock x:Name="LightkeeperPercentageTextBlock" Text="0%" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect ShadowDepth="1" Direction="270" Color="Black" Opacity="0.9" BlurRadius="2"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Grid>
+
                         <Button x:Name="ResetProgressButton" 
                             Content="Reset Progress" 
                             Margin="0,8,0,0" 
