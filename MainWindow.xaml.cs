@@ -8,14 +8,16 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Navigation;
+using System.Windows; // For Window, MessageBox, WindowState, RoutedEventArgs, SystemParameters
+using System.Windows.Controls; // For Controls like Button, CheckBox, ComboBox, GroupBox, Label, ListView, ProgressBar, StackPanel, TextBlock, TextBox, ToggleButton, WrapPanel
+using System.Windows.Data; // For IValueConverter, IMultiValueConverter
+using System.Windows.Input; // For MouseButtonEventArgs, Cursors
+using System.Windows.Navigation; // For RequestNavigateEventArgs
+
+// IMPORTANT: Make sure your ThemeManager.cs file is in the EZcape namespace
+// and that it correctly manages the dynamic resources.
 
 namespace EZcape
 {
@@ -40,8 +42,6 @@ namespace EZcape
             Directory.CreateDirectory(ezcapeFolder);
             _saveFilePath = Path.Combine(ezcapeFolder, "tasks.json");
             _themeFilePath = Path.Combine(ezcapeFolder, "theme.txt");
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            VersionTextBlock.Text = $"Version: {version}";
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -106,49 +106,50 @@ namespace EZcape
             }
         }
 
+        // Updated UpdateProgress method to include Kappa and Lightkeeper progress
         private void UpdateProgress()
         {
             if (_allTasks == null || !_allTasks.Any())
             {
+                // Reset all progress indicators if no tasks
                 ProgressTextBlock.Text = "0 / 0 Completed";
                 CompletionProgressBar.Value = 0;
                 ProgressPercentageTextBlock.Text = "0%";
 
                 KappaProgressTextBlock.Text = "Kappa: 0 / 0";
-                KappaProgressBar.Value = 0;
-                KappaPercentageTextBlock.Text = "0%";
+                KappaCompletionProgressBar.Value = 0;
+                KappaProgressPercentageTextBlock.Text = "0%";
 
                 LightkeeperProgressTextBlock.Text = "Lightkeeper: 0 / 0";
-                LightkeeperProgressBar.Value = 0;
-                LightkeeperPercentageTextBlock.Text = "0%";
+                LightkeeperCompletionProgressBar.Value = 0;
+                LightkeeperProgressPercentageTextBlock.Text = "0%";
                 return;
             }
 
+            // --- Overall Progress ---
             int totalCount = _allTasks.Count;
             int completedCount = _allTasks.Count(t => t.IsCompleted);
-
-            double overallPercentage = (double)completedCount / totalCount * 100;
+            double overallPercentage = (totalCount > 0) ? ((double)completedCount / totalCount) * 100 : 0;
             ProgressTextBlock.Text = $"{completedCount} / {totalCount} Completed";
             CompletionProgressBar.Value = overallPercentage;
             ProgressPercentageTextBlock.Text = $"{overallPercentage:F0}%";
 
-            // Kappa progress
-            var kappaTasks = _allTasks.Where(t => t.KappaRequired).ToList();
-            int kappaCompleted = kappaTasks.Count(t => t.IsCompleted);
-            double kappaPercentage = kappaTasks.Any() ? (double)kappaCompleted / kappaTasks.Count * 100 : 0;
-            KappaProgressTextBlock.Text = $"Kappa: {kappaCompleted} / {kappaTasks.Count}";
-            KappaProgressBar.Value = kappaPercentage;
-            KappaPercentageTextBlock.Text = $"{kappaPercentage:F0}%";
+            // --- Kappa Progress ---
+            int totalKappaTasks = _allTasks.Count(t => t.KappaRequired);
+            int completedKappaTasks = _allTasks.Count(t => t.KappaRequired && t.IsCompleted);
+            double kappaPercentage = (totalKappaTasks > 0) ? ((double)completedKappaTasks / totalKappaTasks) * 100 : 0;
+            KappaProgressTextBlock.Text = $"Kappa: {completedKappaTasks} / {totalKappaTasks}";
+            KappaCompletionProgressBar.Value = kappaPercentage;
+            KappaProgressPercentageTextBlock.Text = $"{kappaPercentage:F0}%";
 
-            // Lightkeeper progress
-            var lightkeeperTasks = _allTasks.Where(t => t.LightkeeperRequired).ToList();
-            int lightkeeperCompleted = lightkeeperTasks.Count(t => t.IsCompleted);
-            double lightkeeperPercentage = lightkeeperTasks.Any() ? (double)lightkeeperCompleted / lightkeeperTasks.Count * 100 : 0;
-            LightkeeperProgressTextBlock.Text = $"Lightkeeper: {lightkeeperCompleted} / {lightkeeperTasks.Count}";
-            LightkeeperProgressBar.Value = lightkeeperPercentage;
-            LightkeeperPercentageTextBlock.Text = $"{lightkeeperPercentage:F0}%";
+            // --- Lightkeeper Progress ---
+            int totalLightkeeperTasks = _allTasks.Count(t => t.LightkeeperRequired);
+            int completedLightkeeperTasks = _allTasks.Count(t => t.LightkeeperRequired && t.IsCompleted);
+            double lightkeeperPercentage = (totalLightkeeperTasks > 0) ? ((double)completedLightkeeperTasks / totalLightkeeperTasks) * 100 : 0;
+            LightkeeperProgressTextBlock.Text = $"Lightkeeper: {completedLightkeeperTasks} / {totalLightkeeperTasks}";
+            LightkeeperCompletionProgressBar.Value = lightkeeperPercentage;
+            LightkeeperProgressPercentageTextBlock.Text = $"{lightkeeperPercentage:F0}%";
         }
-
 
         private void LoadTasksFromDisk()
         {
@@ -345,8 +346,62 @@ namespace EZcape
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
+
+        // --- NEW: Custom Title Bar Event Handlers ---
+
+        // Event handler for dragging the window by clicking and holding the custom title bar
+        private void CustomTitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Check if the left mouse button was pressed down
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                // Check if the window is currently maximized. If so, restore it before dragging.
+                // This makes dragging a maximized window behave like Windows' default (restore and drag).
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    this.WindowState = WindowState.Normal;
+                    // Adjust mouse position to prevent instant re-maximize if dragged from very top
+                    var mousePosition = e.GetPosition(this);
+                    this.Left = mousePosition.X - this.ActualWidth / 2;
+                    this.Top = mousePosition.Y - SystemParameters.CaptionHeight / 2;
+                }
+
+                // Allows dragging the window
+                this.DragMove();
+            }
+        }
+
+        // Event handler for the Minimize button
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        // Event handler for the Maximize/Restore button
+        private void MaximizeRestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+                // Optional: Change the button content to maximize symbol if it's currently restore
+                // MaximizeRestoreButton.Content = ""; // Maximize symbol
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+                // Optional: Change the button content to restore symbol if it's currently maximize
+                // MaximizeRestoreButton.Content = ""; // Restore symbol ( is restore icon)
+            }
+        }
+
+        // Event handler for the Close button
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 
+    // --- Converter Classes (THESE MUST BE HERE, DIRECTLY IN THE NAMESPACE, NOT INSIDE MAINWINDOW CLASS) ---
     public class BooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -369,6 +424,7 @@ namespace EZcape
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) { throw new NotImplementedException(); }
     }
 
+    // --- API Response and Data Model Classes (These must also remain here, directly in the namespace) ---
     public class ApiResponse { [JsonProperty("data")] public ApiData? Data { get; set; } [JsonProperty("errors")] public List<GraphQLError>? Errors { get; set; } }
     public class GraphQLError { [JsonProperty("message")] public string Message { get; set; } = ""; }
     public class ApiData { [JsonProperty("tasks")] public List<TaskItem>? Tasks { get; set; } }
